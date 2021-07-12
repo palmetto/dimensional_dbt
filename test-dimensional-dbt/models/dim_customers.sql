@@ -1,3 +1,6 @@
+{{config(enabled=False)}}
+
+
 WITH
 
 salesforce_leads AS (
