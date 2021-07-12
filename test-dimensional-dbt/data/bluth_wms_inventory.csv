@@ -1,0 +1,5 @@
+DBT_SCD_ID,DBT_UPDATED_AT,DBT_VALID_FROM,DBT_VALID_TO,warehouse_location_id,vendor_id,storage_type
+e127da72fede4ce9aced7b89e054feef,2020-01-11 9:14:14,2020-01-11 9:14:14,2020-05-01 10:11:03,4,chi-500,standard
+7eabf19455053abb2b4dad7d1b05e2a5,2020-01-11 9:14:14,2020-01-11 9:14:14,,4,chi-300,refrigerated
+d9fc5c1c0f3b640e47fd3b653e949b82,2020-01-11 9:14:14,2020-01-11 9:14:14,,6,chi-701,low-co2
+aad1b24508d68060f6afd8ac486d814e,2020-05-01 10:11:03,2020-05-01 10:11:03,,4,chi-500,low-co2
