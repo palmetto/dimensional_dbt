@@ -1,3 +1,3 @@
 DBT_SCD_ID,DBT_UPDATED_AT,DBT_VALID_FROM,DBT_VALID_TO,chiquita_product_id,id,name,description,retail_price,last_updated,dimensional_dbt_valid_from,dimensional_dbt_valid_to
-96cb4e6419c2fea8b2c2e18474b0f939,2021-07-12 14:19:01,2021-07-12 14:19:01,2021-07-14 10:05:12,501,1,Yellow Banana,"The old standard, delicious and good!",2.5,2021-07-12 14:19:01,7/12/2021,7/14/2021
-2bcb1172096b6cff011ffe6baa9e6b5a,2021-07-14 10:05:12,2021-07-14 10:05:12,,501,1,Yellow Banana,"Sweet, yellow goodness.",2.5,2021-07-14 10:05:12,7/14/2021,
+96cb4e6419c2fea8b2c2e18474b0f939,2021-07-12 14:19:01,2021-07-12 14:19:01,2021-07-14 10:05:12,501,1,Yellow Banana,"The old standard, delicious and good!",2.5,2021-07-12 14:19:01,01/01/0000,7/14/2021
+2bcb1172096b6cff011ffe6baa9e6b5a,2021-07-14 10:05:12,2021-07-14 10:05:12,,501,1,Yellow Banana,"Sweet, yellow goodness.",2.5,2021-07-14 10:05:12,7/14/2021,12/31/9999
