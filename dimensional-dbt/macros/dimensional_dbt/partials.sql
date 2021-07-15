@@ -81,15 +81,40 @@
 
         SELECT
             DISTINCT spine_value
-            , {{ unique_key }}
+            , {{ unique_key }} AS unique_key
         FROM {{ truncated_source }}_from_spine
 
         UNION
 
         SELECT 
             DISTINCT spine_value
-            , {{ unique_key }}
+            , {{ unique_key }} AS unique_key
         FROM {{ truncated_source }}_to_spine
 {%- endmacro -%}
 
 
+{%- macro _merge_spines(spine_sources) -%}
+    {#/* Creates a single spine from many spines.
+        Args:
+            spine_sources: an array of source or cte names for spines
+        Returns:
+            a complete select of spine values.
+    */#}
+    WITH union_of_spines AS (
+        {% for spine in spine_sources %}
+            SELECT
+                unique_key
+                ,spine_value
+            FROM
+                {{ spine }}
+            {% if not loop.last %}
+            UNION ALL
+            {% endif %}
+        {% endfor %}
+    )
+    SELECT
+         spine_value
+        , unique_key
+    FROM
+        union_of_spines
+{%- endmacro -%}
