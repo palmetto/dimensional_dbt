@@ -25,5 +25,7 @@ clean-targets:         # directories to be removed by `dbt clean`
     - "dbt_modules"
 models:
   test_dbt_dimensional:
-      banana_stand:
+      private_macros:
           materialized: table
+seeds:
+    +schema: SNAPSHOTS
