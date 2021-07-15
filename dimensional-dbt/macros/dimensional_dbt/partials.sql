@@ -52,6 +52,44 @@
         dimensional_dbt_recency = 1
 {%- endmacro -%}
 
-{%- macro generate_spine(truncated_source, unique_key) -%}
 
+{%- macro _partial_spine(direction, unique_key, truncated_source) -%}
+    {#/* Partial for iscolating spine vals.*/#}
+    SELECT
+	    dimensional_dbt_valid_{{ direction }} AS spine_value
+		, {{ unique_key }}
+    FROM 
+        {{ truncated_source }}
 {%- endmacro -%}
+
+
+{%- macro _generate_spine(truncated_source, unique_key) -%}
+    {#/* Creates a standardized spine to host the disperate dimensions against.
+        Args:
+            truncated_source: the cte name or source name of dimensional_dbt snapshot.
+            unique_key: the column or expression to uniquely identify same-object rows.
+        Returns:
+            a complete select with all the valid to-from date values.
+    */#}
+        WITH 
+        {{ truncated_source }}_from_spine AS (
+            {{ dimensional_dbt._partial_spine('from', unique_key, truncated_source) }}
+        )
+        ,{{ truncated_source }}_to_spine AS (
+            {{ dimensional_dbt._partial_spine('to', unique_key, truncated_source) }}
+        )
+
+        SELECT
+            DISTINCT spine_value
+            , {{ unique_key }}
+        FROM {{ truncated_source }}_from_spine
+
+        UNION
+
+        SELECT 
+            DISTINCT spine_value
+            , {{ unique_key }}
+        FROM {{ truncated_source }}_to_spine
+{%- endmacro -%}
+
+
