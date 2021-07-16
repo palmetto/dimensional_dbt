@@ -31,10 +31,11 @@ stripe AS (
         stripe_d.name AS product_name
         ,stripe_d.retail_price AS retail_price
         ,vendor_d.wholesale_cost AS wholesale_cost
+        ,stripe_d.description AS description
         ,IFNULL(warehouse_d.storage_type,'Storage Unkown') AS required_type_of_storage_in_warehouse
         ,{{ dimensional_dbt.dim_columns() }}
     FROM
-        {{ dimensional_dbt.from_clause(source_ctes, 4) }}
+        {{ dimensional_dbt.from_clause(source_ctes, 5) }}
 )
 SELECT
     column_selection.*
