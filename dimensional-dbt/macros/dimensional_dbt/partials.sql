@@ -118,3 +118,30 @@
     FROM
         union_of_spines
 {%- endmacro -%}
+
+
+{%- macro _create_duration_windows_from_spine(spine) -%}
+    {#/* Creates a spine of valid_to => valid_from windows
+        from a given spine.
+        Args:
+            spine: a valid dimensional_dbt spine with columns `spine_value` and `unique_key`
+        Returns:
+            a complete select of spine values windowed into durations.
+    */#}
+    WITH
+    ordered_spine AS (
+        SELECT 
+            spine_value
+            ,unique_key
+        FROM
+            {{ spine }}
+        ORDER BY spine_value
+    )
+    SELECT
+        unique_key 
+        ,spine_value AS dim_valid_from
+        ,LEAD(spine_value, 1) OVER (PARTITION BY unique_key ORDER BY dim_valid_from) AS dim_valid_to
+    FROM
+        ordered_spine
+    QUALIFY dim_valid_to IS NOT NULL
+{%- endmacro -%}
