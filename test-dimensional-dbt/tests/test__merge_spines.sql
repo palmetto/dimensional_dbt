@@ -3,14 +3,14 @@ WITH
 a_spine AS (
     SELECT
         x.value:spine_value::TIMESTAMP_NTZ AS spine_value
-        ,x.value:unique_key AS unique_key
+        ,x.value:dimensional_dbt_unique_key AS dimensional_dbt_unique_key
     FROM
         TABLE(FLATTEN(input => parse_json(
         '[
-            {"spine_value":"2020-11-05 12:00:00", "unique_key": 505050},
-            {"spine_value":"2020-11-05 15:00:00", "unique_key": 505050},
-            {"spine_value":"0000-01-01 00:00:00", "unique_key": 505050},
-            {"spine_value":"9999-12-31 00:00:00", "unique_key": 505050}
+            {"spine_value":"2020-11-05 12:00:00", "dimensional_dbt_unique_key": 505050},
+            {"spine_value":"2020-11-05 15:00:00", "dimensional_dbt_unique_key": 505050},
+            {"spine_value":"0000-01-01 00:00:00", "dimensional_dbt_unique_key": 505050},
+            {"spine_value":"9999-12-31 00:00:00", "dimensional_dbt_unique_key": 505050}
          ]'
          ))) x
    
@@ -19,16 +19,16 @@ a_spine AS (
 b_spine AS (
     SELECT
         x.value:spine_value::TIMESTAMP_NTZ AS spine_value
-        ,x.value:unique_key AS unique_key
+        ,x.value:dimensional_dbt_unique_key AS dimensional_dbt_unique_key
     FROM
         TABLE(FLATTEN(input => parse_json(
         '[
-            {"spine_value":"2020-10-15 09:00:00", "unique_key": 505050},
-            {"spine_value":"2020-11-03 10:00:00", "unique_key": 560154},
-            {"spine_value":"0000-01-01 00:00:00", "unique_key": 560154},
-            {"spine_value":"9999-12-31 00:00:00", "unique_key": 505050},
-            {"spine_value":"9999-12-31 00:00:00", "unique_key": 560154},
-            {"spine_value":"0000-01-01 00:00:00", "unique_key": 505050}
+            {"spine_value":"2020-10-15 09:00:00", "dimensional_dbt_unique_key": 505050},
+            {"spine_value":"2020-11-03 10:00:00", "dimensional_dbt_unique_key": 560154},
+            {"spine_value":"0000-01-01 00:00:00", "dimensional_dbt_unique_key": 560154},
+            {"spine_value":"9999-12-31 00:00:00", "dimensional_dbt_unique_key": 505050},
+            {"spine_value":"9999-12-31 00:00:00", "dimensional_dbt_unique_key": 560154},
+            {"spine_value":"0000-01-01 00:00:00", "dimensional_dbt_unique_key": 505050}
          ]'
          ))) x
    
@@ -36,16 +36,16 @@ b_spine AS (
 ,c_spine AS (
     SELECT
         x.value:spine_value::TIMESTAMP_NTZ AS spine_value
-        ,x.value:unique_key AS unique_key
+        ,x.value:dimensional_dbt_unique_key AS dimensional_dbt_unique_key
     FROM
         TABLE(FLATTEN(input => parse_json(
         '[
-            {"spine_value":"2018-05-11 19:00:00", "unique_key": 505050},
-            {"spine_value":"2021-04-13 11:00:00", "unique_key": 560154},
-            {"spine_value":"0000-01-01 00:00:00", "unique_key": 560154},
-            {"spine_value":"9999-12-31 00:00:00", "unique_key": 505050},
-            {"spine_value":"9999-12-31 00:00:00", "unique_key": 560154},
-            {"spine_value":"0000-01-01 00:00:00", "unique_key": 505050}
+            {"spine_value":"2018-05-11 19:00:00", "dimensional_dbt_unique_key": 505050},
+            {"spine_value":"2021-04-13 11:00:00", "dimensional_dbt_unique_key": 560154},
+            {"spine_value":"0000-01-01 00:00:00", "dimensional_dbt_unique_key": 560154},
+            {"spine_value":"9999-12-31 00:00:00", "dimensional_dbt_unique_key": 505050},
+            {"spine_value":"9999-12-31 00:00:00", "dimensional_dbt_unique_key": 560154},
+            {"spine_value":"0000-01-01 00:00:00", "dimensional_dbt_unique_key": 505050}
          ]'
          ))) x
    
@@ -58,16 +58,16 @@ b_spine AS (
 , expected_505050_spine AS (
     SELECT 
         x.value:spine_value::TIMESTAMP_NTZ AS spine_value
-        ,x.value:unique_key AS unique_key
+        ,x.value:dimensional_dbt_unique_key AS dimensional_dbt_unique_key
     FROM
         TABLE(FLATTEN(input => parse_json(
         '[
-            {"spine_value":"0000-01-01 00:00:00", "unique_key": 505050},
-            {"spine_value":"2018-05-11 19:00:00", "unique_key": 505050},
-            {"spine_value":"2020-10-15 09:00:00", "unique_key": 505050},
-            {"spine_value":"2020-11-05 12:00:00", "unique_key": 505050},
-            {"spine_value":"2020-11-05 15:00:00", "unique_key": 505050},
-            {"spine_value":"9999-12-31 00:00:00", "unique_key": 505050}
+            {"spine_value":"0000-01-01 00:00:00", "dimensional_dbt_unique_key": 505050},
+            {"spine_value":"2018-05-11 19:00:00", "dimensional_dbt_unique_key": 505050},
+            {"spine_value":"2020-10-15 09:00:00", "dimensional_dbt_unique_key": 505050},
+            {"spine_value":"2020-11-05 12:00:00", "dimensional_dbt_unique_key": 505050},
+            {"spine_value":"2020-11-05 15:00:00", "dimensional_dbt_unique_key": 505050},
+            {"spine_value":"9999-12-31 00:00:00", "dimensional_dbt_unique_key": 505050}
          ]'
          ))) x
 ) 
@@ -83,7 +83,7 @@ b_spine AS (
     FROM
         test_of_spine_merge
     WHERE 
-        unique_key = 505050
+        dimensional_dbt_unique_key = 505050
 )
 ,found_not_expected AS (
     SELECT
@@ -91,7 +91,7 @@ b_spine AS (
     FROM
         test_of_spine_merge
     WHERE
-        unique_key = 505050
+        dimensional_dbt_unique_key = 505050
 
     MINUS
     SELECT

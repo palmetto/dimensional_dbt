@@ -14,7 +14,7 @@
     WITH 
         earliest_{{ source }} AS (
             SELECT 
-                {{ unique_key }} AS unique_key
+                {{ unique_key }} AS dimensional_dbt_unique_key
                 , DATE_TRUNC('{{precision}}', MIN(dbt_updated_at)) AS earliest_dbt_updated_at
             FROM 
                 {{ source }}
@@ -23,14 +23,15 @@
 
         ,truncated_{{ source }} AS (
             SELECT
-                {{ unique_key }} AS unique_key
+                {{ unique_key }} AS dimensional_dbt_unique_key
                 ,dbt_updated_at
-                ,RANK() OVER (PARTITION BY unique_key, DATE_TRUNC('{{precision}}', dbt_updated_at) ORDER BY dbt_updated_at DESC ) AS dimensional_dbt_recency
+                ,RANK() OVER (PARTITION BY {{ unique_key }}, DATE_TRUNC('{{precision}}', dbt_updated_at) ORDER BY dbt_updated_at DESC ) AS dimensional_dbt_recency
             FROM
                 {{ source }} AS source
         )
     SELECT
         source.*
+        ,deduplicated.dimensional_dbt_unique_key
         ,CASE 
             WHEN DATE_TRUNC('{{precision}}', dbt_valid_from ) = earliest_dbt_updated_at THEN '0000-01-01'::TIMESTAMP_NTZ
             ELSE DATE_TRUNC('{{precision}}', dbt_valid_from )
@@ -41,7 +42,7 @@
     RIGHT JOIN
         truncated_{{ source }} deduplicated
     ON 
-        {{ unique_key }} = deduplicated.unique_key
+        source.{{ unique_key }} = deduplicated.dimensional_dbt_unique_key
     AND
         source.dbt_updated_at = deduplicated.dbt_updated_at
     JOIN
@@ -81,14 +82,14 @@
 
         SELECT
             DISTINCT spine_value
-            , {{ unique_key }} AS unique_key
+            , {{ unique_key }} AS dimensional_dbt_unique_key
         FROM {{ truncated_source }}_from_spine
 
         UNION
 
         SELECT 
             DISTINCT spine_value
-            , {{ unique_key }} AS unique_key
+            , {{ unique_key }} AS dimensional_dbt_unique_key
         FROM {{ truncated_source }}_to_spine
 {%- endmacro -%}
 
@@ -103,7 +104,7 @@
     WITH union_of_spines AS (
         {% for spine in spine_sources %}
             SELECT
-                unique_key
+                dimensional_dbt_unique_key
                 ,spine_value
             FROM
                 {{ spine }}
@@ -114,7 +115,7 @@
     )
     SELECT
          spine_value
-        , unique_key
+        , dimensional_dbt_unique_key
     FROM
         union_of_spines
 {%- endmacro -%}
@@ -132,16 +133,17 @@
     ordered_spine AS (
         SELECT 
             spine_value
-            ,unique_key
+            ,dimensional_dbt_unique_key
         FROM
             {{ spine }}
         ORDER BY spine_value
     )
     SELECT
-        unique_key 
+        dimensional_dbt_unique_key 
         ,spine_value AS dim_valid_from
-        ,LEAD(spine_value, 1) OVER (PARTITION BY unique_key ORDER BY dim_valid_from) AS dim_valid_to
+        ,LEAD(spine_value, 1) OVER (PARTITION BY dimensional_dbt_unique_key ORDER BY dim_valid_from) AS dim_valid_to
     FROM
         ordered_spine
-    QUALIFY dim_valid_to IS NOT NULL
+    QUALIFY dim_valid_to IS NOT NULL 
+    AND dim_valid_to <> dim_valid_from
 {%- endmacro -%}
