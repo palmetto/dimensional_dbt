@@ -1,8 +1,8 @@
 WITH
 
 {{ dimensional_dbt.source_builder('_stripe_source','chiquita_product_id::NUMBER', 'stripe') }}
-,{{ dimensional_dbt.source_builder('_warehouse_source',"REPLACE(vendor_id,'chi-','')::NUMBER", 'warehouse') }}
-,{{ dimensional_dbt.source_builder('_vendor_source','id::NUMBER', 'vendor') }}
+,{{ dimensional_dbt.source_builder(['snapshots', 'bluth_wms_inventory'], "REPLACE(vendor_id,'chi-','')::NUMBER", 'warehouse', "source") }}
+,{{ dimensional_dbt.source_builder('DIMENSIONAL_DBT_SNAPSHOTS.CHIQUITA_INVOICES','id::NUMBER', 'vendor', "raw") }}
 
 {% call dimensional_dbt.column_selection(['stripe','warehouse','vendor'], 5) %}
     SELECT 
