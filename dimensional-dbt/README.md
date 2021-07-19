@@ -90,8 +90,15 @@ This will result in a table of dimensional snapshots with 1-hour granularity for
 
 ## Transformation Strategies
 
-Once you have snapshots, there are two strategies for where to do your transformations:
+There are two strategies for where to do your transformations:
 1. upstream of `dimensional-dbt` in an ephemeral model
 2. downstream of `dimensional-dbt` after the merge
 
-Both use the same structure, 
+Both use the same structure above. 
+Generally it is recommended to do your transforms upstream of the merge where possible; this makes transform code easy to isolate and debug.
+The dbt [Ephemeral](https://docs.getdbt.com/docs/building-a-dbt-project/building-models/materializations#ephemeral) pattern is great for this; 
+You can create ephemeral models for each of your dimensional sources, then stitch the transformed data together.
+
+... (need more here)
+
+
