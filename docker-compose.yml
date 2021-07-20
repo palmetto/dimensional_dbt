@@ -1,14 +1,15 @@
 version: "3.5"
 services:
-  dimensional-dbt:
+  dimensional_dbt:
     image: dimensional_dbt
     build:
       context: .
       dockerfile: Dockerfile
     volumes:
-      - ./test-dimensional-dbt:/app
-      - ./macros:/dimensional-dbt/macros
-      - ./dbt_project.yml/dimensional-dbt/dbt_project.yml
+      - ./test_dimensional_dbt:/app
+      - ./macros:/dimensional_dbt/macros
+      - ./dbt_project.yml/dimensional_dbt/dbt_project.yml
+    working_dir: /app
     entrypoint: ["./entrypoint.sh"]
     env_file:
       - .env

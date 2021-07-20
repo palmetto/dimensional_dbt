@@ -11,10 +11,10 @@ Too bad these architectures do not play well together...
 
 **UNTIL NOW**. 
 
-[dimensional-dbt](https://github.com/palmetto/dimensional-dbt) gives you the best of both worlds; use [DBT Snapshots](https://docs.getdbt.com/docs/building-a-dbt-project/snapshots) to make your source data immutable, then use `dimensional-dbt` to create true [slowly changing dimensions](https://www.kimballgroup.com/2008/08/slowly-changing-dimensions/) from those snapshots. 
+[dimensional_dbt](https://github.com/palmetto/dimensional_dbt) gives you the best of both worlds; use [DBT Snapshots](https://docs.getdbt.com/docs/building-a-dbt-project/snapshots) to make your source data immutable, then use `dimensional_dbt` to create true [slowly changing dimensions](https://www.kimballgroup.com/2008/08/slowly-changing-dimensions/) from those snapshots. 
 
 
-### What dimensional-dbt gives you
+### What dimensional_dbt gives you
 
 * Combine multiple snapshots into a single slowly changing dimension
 * De-duplicate snapshots below the precision threshold (default is hourly) ~ _TODO_: this is not adjustable right now, need to fix that.
@@ -22,7 +22,7 @@ Too bad these architectures do not play well together...
 * Numeric dimensional keys
 
 
-## Installing dimensional-dbt
+## Installing dimensional_dbt
 
 Install the package via [dbthub](https://hub.getdbt.com/) by adding to your packages.yml:
 
@@ -36,13 +36,13 @@ Or install directly from git:
 
 ```
 packages:
-  - git: "https://github.com/palmetto/dimensional-dbt.git"
+  - git: "https://github.com/palmetto/dimensional_dbt.git"
     revision: 0.0.1 
 ```
 
 ## Use Patterns
 
-`dimensional-dbt` stitches dbt snapshot tables together, so first things first make sure you are creating snapshots with `dbt snapshot`. 
+`dimensional_dbt` stitches dbt snapshot tables together, so first things first make sure you are creating snapshots with `dbt snapshot`. 
 
 Once you have snapshots you want to merge, you can do so in a dim model.
 For example let's say we have snapshots from our ERP, our CRM and our fraud detection vendor, and we want to merge user data for all 3:
@@ -99,8 +99,8 @@ This will result in a table of dimensional snapshots with 1-hour granularity for
 ## Transformation Strategies
 
 There are two strategies for where to do your transformations:
-1. upstream of `dimensional-dbt` in an ephemeral model
-2. downstream of `dimensional-dbt` after the merge
+1. upstream of `dimensional_dbt` in an ephemeral model
+2. downstream of `dimensional_dbt` after the merge
 
 Both use the same structure above. 
 Generally it is recommended to do your transforms upstream of the merge where possible; this makes transform code easy to isolate and debug.
@@ -148,8 +148,11 @@ FROM
 
 ```
 
-`dim_lookup` takes 3 required arguments and one optional:
+`dim_lookup` takes 3 required arguments and 2 optional:
 * dimensional_model: the name of the dim you want to include the key for
 * identifier: the column or sql statement for the identifier that matches the dim_id
 * occurance_at: the timestamp or date at which the fact occurred (so dimensional_dbt can find the correct key)
+* alias (optional): an alias for the joined dim. useful when you need the same dim more than once
+* current (optional): when True, dimensional_dbt will ignore the occurance_at value and join 
+  the most current record for the id (ie "current state")
 
