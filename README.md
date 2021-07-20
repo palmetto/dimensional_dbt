@@ -32,6 +32,14 @@ packages:
     version: 0.0.1
 ```
 
+Or install directly from git:
+
+```
+packages:
+  - git: "https://github.com/palmetto/dimensional-dbt.git"
+    revision: 0.0.1 
+```
+
 ## Use Patterns
 
 `dimensional-dbt` stitches dbt snapshot tables together, so first things first make sure you are creating snapshots with `dbt snapshot`. 

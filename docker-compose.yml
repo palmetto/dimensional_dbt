@@ -7,7 +7,8 @@ services:
       dockerfile: Dockerfile
     volumes:
       - ./test-dimensional-dbt:/app
-      - ./dimensional-dbt:/dimensional-dbt
+      - ./macros:/dimensional-dbt/macros
+      - ./dbt_project.yml/dimensional-dbt/dbt_project.yml
     entrypoint: ["./entrypoint.sh"]
     env_file:
       - .env
