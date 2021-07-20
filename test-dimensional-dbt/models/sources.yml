@@ -5,6 +5,7 @@ sources:
     schema: DIMENSIONAL_DBT_SNAPSHOTS
     tables:
       - name: bluth_stripe_banana_stand_product
+      - name: bluth_stripe_order_events
       - name: bluth_wms_inventory
       - name: chiquita_invoices
 

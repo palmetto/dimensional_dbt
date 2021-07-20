@@ -58,7 +58,11 @@
     LEFT JOIN 
         {{ ref(dim_name) }} AS {{final_alias}}
     ON 
-        {{unique_identifier}} = {{final_alias}}.{{dim_name}}_key
+        {{unique_identifier}} = {{final_alias}}.{{dim_name}}_id
     AND
-        {{ occurance_at }} BETWEEN {{final_alias}}.dim_valid_from AND {{final_alias}}.dim_valid_to
+        {% if current %}
+            {{final_alias}}.dim_is_current_record = TRUE
+        {% else %}
+            {{ occurance_at }} BETWEEN {{final_alias}}.dim_valid_from AND {{final_alias}}.dim_valid_to
+        {% endif %}
 {%- endmacro -%}
