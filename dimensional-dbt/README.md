@@ -99,6 +99,49 @@ Generally it is recommended to do your transforms upstream of the merge where po
 The dbt [Ephemeral](https://docs.getdbt.com/docs/building-a-dbt-project/building-models/materializations#ephemeral) pattern is great for this; 
 You can create ephemeral models for each of your dimensional sources, then stitch the transformed data together.
 
-... (need more here)
+## NULL value handling with coalesce
 
+Kimball methodology for dimensions [recommends against allowing NULL values in dimensions](https://www.kimballgroup.com/data-warehouse-business-intelligence-resources/kimball-techniques/dimensional-modeling-techniques/null-dimension-attribute/#:~:text=Null%2Dvalued%20dimension%20attributes%20result,place%20of%20the%20null%20value.), and with good reasons:
+
+- `NULL` values do not always play well with BI Tools and join patterns, 
+   because missing data is not the same as a symbol like "Not Available"
+- Meaningful symbols such as "Not Available" make rows readable without header context
+- If values are always explicit, then `NULL`s can be used as a warning sign for bad business logic
+
+To implement a non-null dimensional pattern, `COALESCE` is your friend. In the `column_selection` block 
+you can use coalesce to determine the order of precedence for sources, and a final default value.
+In the example above, if we want to define a customer's contact preference first by the CRM value, then the ERP value, or 
+indicate no preference has been given:
+
+```
+// In column_selection macro
+...
+, COALESCE(crm_d.contact_preference, erp_d.contact_preference, "No Contact Preference Given") AS contact_preference
+
+```
+
+### Adding the Dimension Key to a Fact
+Dimensions are only really useful once they start adding value to facts. To do that easily, `dimensional_dbt` ships with the
+**dimensional_dbt.dim_lookup** macro. 
+
+```
+// fact sale
+
+SELECT
+  invoice.date AS sale_date
+  ,invoice.quantity AS quantity
+  ,invoice.total_price AS total_price
+  ,dim_user.dim_user_key AS dim_user_key
+...
+
+FROM
+  source_database.customer_invoices invoice
+  {{ dimensional_dbt.dim_lookup('dim_user', 'invoice.erp_user_id', 'invoice.date') }}
+
+```
+
+`dim_lookup` takes 3 required arguments and one optional:
+* dimensional_model: the name of the dim you want to include the key for
+* identifier: the column or sql statement for the identifier that matches the dim_id
+* occurance_at: the timestamp or date at which the fact occurred (so dimensional_dbt can find the correct key)
 
