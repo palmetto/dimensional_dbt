@@ -1,0 +1,28 @@
+name: dbt cycle test
+on:
+  pull_request:
+    branches:
+      - main
+  push:
+    branches-ignore:
+      - master
+      - main
+      - develop
+
+jobs:
+  runtest:
+    runs-on: ubuntu-latest
+    env:
+      SNOWFLAKE_USERNAME: ${{ secrets.SNOWFLAKE_USERNAME }}
+      SNOWFLAKE_PASSWORD: ${{ secrets.SNOWFLAKE_PASSWORD }}
+      SNOWFLAKE_ACCOUNT: ${{ secrets.SNOWFLAKE_ACCOUNT }}
+      SNOWFLAKE_ROLE: ${{ secrets.SNOWFLAKE_ROLE }}
+      SNOWFLAKE_WAREHOUSE: ${{ secrets.SNOWFLAKE_WAREHOUSE }}
+      SNOWFLAKE_DATABASE: ${{ secrets.SNOWFLAKE_DATABASE }}
+    steps:
+    # Sadly no anchor support in GH so this is messy :(
+    - uses: actions/checkout@v1
+    - name: run via the entrypoint
+      run: docker-compose run --rm --env-file .ci-env dimensional_dbt
+    - name: cleanup
+      run: docker-compose run --rm --env-file .ci-env dimensional_dbt cleanup
