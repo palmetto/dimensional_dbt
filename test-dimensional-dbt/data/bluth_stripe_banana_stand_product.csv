@@ -1,3 +1,0 @@
-DBT_SCD_ID,DBT_UPDATED_AT,DBT_VALID_FROM,DBT_VALID_TO,chiquita_product_id,id,name,description,retail_price,last_updated
-4337d03b0978c7a0adaad16f154b5e29,2021-07-12 11:45:01,2021-07-12 11:45:01,2021-07-12 11:48:11,501,1,yellow banana,"The old standard, delicious and good.",2,2021-07-12 11:45:01
-5b4e7119c8c021721601320ba8c303ed,2021-07-12 11:48:11,2021-07-12 11:48:11,,501,1,yellow banana,"The old standard, delicious and good!",2.5,2021-07-12 11:48:11

@@ -1,9 +1,0 @@
-name: 'dbt_dimensional'
-version: '0.0.1'
-config-version: 2
-macro-paths: ["macros"]
-target-path: "target"  
-log-path: "logs"
-clean-targets:         
-    - "target"
-    - "dbt_modules"
