@@ -45,10 +45,11 @@
         source.{{ unique_key }} = deduplicated.dimensional_dbt_unique_key
     AND
         source.dbt_updated_at = deduplicated.dbt_updated_at
-    JOIN
+    LEFT JOIN
     earliest_{{ source }}
     ON 
-        1=1
+        earliest_{{ source }}.dimensional_dbt_unique_key = deduplicated.dimensional_dbt_unique_key
+
     WHERE 
         dimensional_dbt_recency = 1
 {%- endmacro -%}
