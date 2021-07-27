@@ -148,3 +148,19 @@
     QUALIFY dim_valid_to IS NOT NULL 
     AND dim_valid_to <> dim_valid_from
 {%- endmacro -%}
+
+
+{%- macro coalesce_snapshot_cols(sources, col_suffix ) -%}
+    {#/* creates a coalesce statement from a list of dbt sources
+        for dbt snapshot columns.
+        Args:
+            sources: the source names to coalese
+            col_suffix: what type of dbt snapshot col is this?
+    */#}
+    COALESCE(
+        {% for source in sources %}
+            {{ source }}_d.dbt_{{col_suffix}}
+            {% if not loop.last %},{% endif %}
+        {% endfor %}
+    )
+{%- endmacro -%}

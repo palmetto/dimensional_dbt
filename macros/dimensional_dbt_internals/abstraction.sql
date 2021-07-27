@@ -5,18 +5,32 @@
 
 {%- endmacro -%}
 
-{%- macro after_select(source_ctes, column_count) -%}
+{%- macro after_select(source_ctes, column_count, partial) -%}
+    {% if partial %}
+        ,{{ dimensional_dbt.coalesce_snapshot_cols(source_ctes, 'valid_from') }} AS dbt_valid_from
+        ,{{ dimensional_dbt.coalesce_snapshot_cols(source_ctes, 'valid_to') }} AS dbt_valid_to
+        ,{{ dimensional_dbt.coalesce_snapshot_cols(source_ctes, 'updated_at') }} AS dbt_updated_at
+        ,{{ dimensional_dbt.coalesce_snapshot_cols(source_ctes, 'scd_id') }} AS dbt_scd_id
+    {% else %}
         ,{{ dimensional_dbt.dim_columns() }}
+    {% endif %}
     FROM
-        {{ dimensional_dbt.from_clause(source_ctes, column_count) }}
+        {% set final_column_count = (column_count + 3) if partial else column_count %}
+        {{ dimensional_dbt.from_clause(source_ctes, final_column_count) }}
 )
 SELECT
     dimensional_dbt_column_selection.*
+    {% if not partial %}
     ,{{ dimensional_dbt.generate_dim_key() }}
+    {% endif %}
 FROM
     dimensional_dbt_column_selection
 ORDER BY
-    dim_valid_from, 
-    {{ dimensional_dbt.dim_key() }}
+    {% if partial %}
+        dbt_valid_from
+    {% else %}
+        dim_valid_from,
+        {{ dimensional_dbt.dim_key() }}
+    {% endif %} 
 {%- endmacro -%}
 
