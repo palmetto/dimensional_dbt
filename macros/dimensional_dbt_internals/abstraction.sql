@@ -15,6 +15,7 @@
         ,{{ dimensional_dbt.dim_columns() }}
     {% endif %}
     FROM
+        {#/* +3 is due to the extra columns above needed for a partial */#}
         {% set final_column_count = (column_count + 3) if partial else column_count %}
         {{ dimensional_dbt.from_clause(source_ctes, final_column_count) }}
 )
