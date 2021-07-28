@@ -1,17 +1,18 @@
-{%- macro column_selection(source_ctes, column_count) -%}
+{%- macro column_selection(source_ctes, column_count, partial=False) -%}
     {#/* The dimensional merge entrypoint where final select columns are defined.
         Note: this is intended to be used as a callback for a `call` block with a SELECT partial.
         Args:
             source_ctes: a list of CTE names either manually created or generated via `source_builder`. 
                 Each CTE will be merged into the final available sources for the select statement.
             column_count: The number of columns captured in the select.
+            partial: if true will build the table to resemble a DBT Snapshot (so you can join it again).
         Returns:
             A completed complex partial that wraps the calling SELECT with a CTE and complex FROM statement. 
             See the README for more details.
     */#}
     {{ dimensional_dbt.before_select(source_ctes) }}
     {{ caller() }}
-    {{ dimensional_dbt.after_select(source_ctes, column_count) }}
+    {{ dimensional_dbt.after_select(source_ctes, column_count, partial) }}
 {%- endmacro -%}
 
 
