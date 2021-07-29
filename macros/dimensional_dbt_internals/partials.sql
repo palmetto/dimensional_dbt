@@ -58,7 +58,7 @@
 {%- macro _partial_spine(direction, unique_key, truncated_source) -%}
     {#/* Partial for iscolating spine vals.*/#}
     SELECT
-	    dimensional_dbt_valid_{{ direction }} AS spine_value
+	    dimensional_dbt_valid_{{ direction }}::TIMESTAMPNTZ AS spine_value
 		, {{ unique_key }}
     FROM 
         {{ truncated_source }}
