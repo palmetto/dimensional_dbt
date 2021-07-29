@@ -85,7 +85,7 @@
 {%- macro dim_columns() -%}
     dim_valid_window.dimensional_dbt_unique_key AS {{ this.name }}_id
     ,MAX(CASE dim_valid_window.dim_valid_to
-        WHEN '9999-12-31'::TIMESTAMP_NTZ THEN TRUE
+        WHEN '9999-12-31'::TIMESTAMPNTZ THEN TRUE
         ELSE FALSE
     END) AS dim_is_current_record
     ,MIN(dim_valid_window.dim_valid_from) AS dim_valid_from

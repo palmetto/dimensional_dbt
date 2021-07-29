@@ -25,7 +25,7 @@
             SELECT
                 {{ unique_key }} AS dimensional_dbt_unique_key
                 ,dbt_updated_at
-                ,RANK() OVER (PARTITION BY {{ unique_key }}, DATE_TRUNC('{{precision}}', dbt_updated_at) ORDER BY dbt_updated_at DESC ) AS dimensional_dbt_recency
+                ,RANK() OVER (PARTITION BY {{ unique_key }}, DATE_TRUNC('{{precision}}', dbt_updated_at::TIMESTAMPNTZ) ORDER BY dbt_updated_at DESC ) AS dimensional_dbt_recency
             FROM
                 {{ source }} AS source
         )
@@ -44,7 +44,7 @@
     ON 
         source.{{ unique_key }} = deduplicated.dimensional_dbt_unique_key
     AND
-        source.dbt_updated_at = deduplicated.dbt_updated_at
+        source.dbt_updated_at::TIMESTAMPNTZ = deduplicated.dbt_updated_at::TIMESTAMPNTZ
     LEFT JOIN
     earliest_{{ source }}
     ON 
