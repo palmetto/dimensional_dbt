@@ -15,7 +15,7 @@
         earliest_{{ source }} AS (
             SELECT 
                 {{ unique_key }} AS dimensional_dbt_unique_key
-                , DATE_TRUNC('{{precision}}', MIN(dbt_updated_at)) AS earliest_dbt_updated_at
+                , DATE_TRUNC('{{precision}}', MIN(dbt_updated_at))::TIMESTAMPNTZ AS earliest_dbt_updated_at
             FROM 
                 {{ source }}
             GROUP BY 1
@@ -33,10 +33,10 @@
         source.*
         ,deduplicated.dimensional_dbt_unique_key
         ,CASE 
-            WHEN DATE_TRUNC('{{precision}}', dbt_valid_from ) = earliest_dbt_updated_at THEN '0000-01-01'::TIMESTAMP_NTZ
-            ELSE DATE_TRUNC('{{precision}}', dbt_valid_from )
+            WHEN DATE_TRUNC('{{precision}}', dbt_valid_from::TIMESTAMPNTZ ) = earliest_dbt_updated_at THEN '0000-01-01'::TIMESTAMPNTZ
+            ELSE DATE_TRUNC('{{precision}}', dbt_valid_from::TIMESTAMPNTZ )
         END AS dimensional_dbt_valid_from
-        ,IFNULL(DATE_TRUNC('{{precision}}', dbt_valid_to ), '9999-12-31'::TIMESTAMP_NTZ) AS dimensional_dbt_valid_to
+        ,IFNULL(DATE_TRUNC('{{precision}}', dbt_valid_to ), '9999-12-31'::TIMESTAMPNTZ) AS dimensional_dbt_valid_to
     FROM
         {{ source }} source
     RIGHT JOIN
