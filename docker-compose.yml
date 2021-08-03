@@ -8,7 +8,7 @@ services:
     volumes:
       - ./test_dimensional_dbt:/app
       - ./macros:/dimensional_dbt/macros
-      - ./dbt_project.yml/dimensional_dbt/dbt_project.yml
+      - ./dbt_project.yml:/dimensional_dbt/dbt_project.yml
     working_dir: /app
     entrypoint: ["./entrypoint.sh"]
     env_file:

@@ -94,9 +94,9 @@
 
 {%- macro generate_dim_key() -%}
     {#/* Actually creates the dim key */#}
-    ROW_NUMBER() OVER(ORDER BY 1) + 5000 AS {{this.name}}_sk
+    ROW_NUMBER() OVER(ORDER BY 1) + 5000 AS sk
 {%- endmacro -%}
 
 {%- macro dim_key() -%}
-    {{this.name}}_sk
+    sk
 {%- endmacro -%}
