@@ -92,7 +92,7 @@ This will result in a table of dimensional snapshots with 1-hour granularity for
 * `dim_valid_from` that reflects greedy (beginning of time) timebands 
 * `dim_valid_to` that reflects greedy (end of time) timebands
 * `dim_is_current_record` for easy filtering
-* `<your_model_name>_key` the numeric identifier assigned by the model name. Each record has a unique key representing the record at that instance in time.
+* `<your_model_name>_sk` the numeric identifier assigned by the model name. Each record has a unique key representing the record at that instance in time.
 * `<your_model_name>_id` the unique identifier of the object, common to keys that represent different states of the same object.
 
 
@@ -139,7 +139,7 @@ SELECT
   invoice.date AS sale_date
   ,invoice.quantity AS quantity
   ,invoice.total_price AS total_price
-  ,dim_user.dim_user_key AS dim_user_key
+  ,dim_user.dim_user_sk AS dim_user_sk
 ...
 
 FROM
