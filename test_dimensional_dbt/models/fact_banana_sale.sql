@@ -1,5 +1,5 @@
 SELECT
-    dim_product.dim_product_fully_abstracted_key AS dim_product_key
+    dim_product.sk AS dim_product_key
     ,sale.quantity AS quantity_sold
     ,sale.sale_tendered::DATE as sold_on_date
 FROM
