@@ -156,3 +156,10 @@ FROM
 * current (optional): when True, dimensional_dbt will ignore the occurance_at value and join 
   the most current record for the id (ie "current state")
 
+## Troubleshooting
+
+### Common Errors:
+
+- `sequence item <int>: expected str instance, Undefined found`
+  This is likely because you haven't actually installed the `dimensional_dbt` package. 
+  Try running `dbt clean && dbt deps`.

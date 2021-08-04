@@ -7,9 +7,9 @@
 
 {%- macro after_select(source_ctes, column_count, partial) -%}
     {% if partial %}
-        ,{{ dimensional_dbt.coalesce_snapshot_cols(source_ctes, 'valid_from') }} AS dbt_valid_from
-        ,{{ dimensional_dbt.coalesce_snapshot_cols(source_ctes, 'valid_to') }} AS dbt_valid_to
-        ,{{ dimensional_dbt.coalesce_snapshot_cols(source_ctes, 'updated_at') }} AS dbt_updated_at
+        ,{{ dimensional_dbt.coalesce_snapshot_cols(source_ctes, 'valid_from') }}::TIMESTAMPNTZ AS dbt_valid_from
+        ,{{ dimensional_dbt.coalesce_snapshot_cols(source_ctes, 'valid_to') }}::TIMESTAMPNTZ AS dbt_valid_to
+        ,{{ dimensional_dbt.coalesce_snapshot_cols(source_ctes, 'updated_at') }}::TIMESTAMPNTZ AS dbt_updated_at
         ,{{ dimensional_dbt.coalesce_snapshot_cols(source_ctes, 'scd_id') }} AS dbt_scd_id
     {% else %}
         ,{{ dimensional_dbt.dim_columns() }}

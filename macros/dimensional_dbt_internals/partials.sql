@@ -15,7 +15,7 @@
         earliest_{{ source }} AS (
             SELECT 
                 {{ unique_key }} AS dimensional_dbt_unique_key
-                , DATE_TRUNC('{{precision}}', MIN(dbt_updated_at)) AS earliest_dbt_updated_at
+                , DATE_TRUNC('{{precision}}', MIN(dbt_updated_at))::TIMESTAMPNTZ AS earliest_dbt_updated_at
             FROM 
                 {{ source }}
             GROUP BY 1
@@ -25,7 +25,7 @@
             SELECT
                 {{ unique_key }} AS dimensional_dbt_unique_key
                 ,dbt_updated_at
-                ,RANK() OVER (PARTITION BY {{ unique_key }}, DATE_TRUNC('{{precision}}', dbt_updated_at) ORDER BY dbt_updated_at DESC ) AS dimensional_dbt_recency
+                ,RANK() OVER (PARTITION BY {{ unique_key }}, DATE_TRUNC('{{precision}}', dbt_updated_at::TIMESTAMPNTZ) ORDER BY dbt_updated_at DESC ) AS dimensional_dbt_recency
             FROM
                 {{ source }} AS source
         )
@@ -33,10 +33,10 @@
         source.*
         ,deduplicated.dimensional_dbt_unique_key
         ,CASE 
-            WHEN DATE_TRUNC('{{precision}}', dbt_valid_from ) = earliest_dbt_updated_at THEN '0000-01-01'::TIMESTAMP_NTZ
-            ELSE DATE_TRUNC('{{precision}}', dbt_valid_from )
+            WHEN DATE_TRUNC('{{precision}}', dbt_valid_from::TIMESTAMPNTZ ) = earliest_dbt_updated_at THEN '0000-01-01'::TIMESTAMPNTZ
+            ELSE DATE_TRUNC('{{precision}}', dbt_valid_from::TIMESTAMPNTZ )
         END AS dimensional_dbt_valid_from
-        ,IFNULL(DATE_TRUNC('{{precision}}', dbt_valid_to ), '9999-12-31'::TIMESTAMP_NTZ) AS dimensional_dbt_valid_to
+        ,IFNULL(DATE_TRUNC('{{precision}}', dbt_valid_to ), '9999-12-31'::TIMESTAMPNTZ) AS dimensional_dbt_valid_to
     FROM
         {{ source }} source
     RIGHT JOIN
@@ -44,7 +44,7 @@
     ON 
         source.{{ unique_key }} = deduplicated.dimensional_dbt_unique_key
     AND
-        source.dbt_updated_at = deduplicated.dbt_updated_at
+        source.dbt_updated_at::TIMESTAMPNTZ = deduplicated.dbt_updated_at::TIMESTAMPNTZ
     LEFT JOIN
     earliest_{{ source }}
     ON 
@@ -58,7 +58,7 @@
 {%- macro _partial_spine(direction, unique_key, truncated_source) -%}
     {#/* Partial for iscolating spine vals.*/#}
     SELECT
-	    dimensional_dbt_valid_{{ direction }} AS spine_value
+	    dimensional_dbt_valid_{{ direction }}::TIMESTAMPNTZ AS spine_value
 		, {{ unique_key }}
     FROM 
         {{ truncated_source }}
