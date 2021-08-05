@@ -59,7 +59,7 @@
     LEFT JOIN 
         {{ ref(dim_name) }} AS {{final_alias}}
     ON 
-        {{unique_identifier}} = {{final_alias}}.sk
+        {{unique_identifier}} = {{final_alias}}.{{dim_name}}_id
     AND
         {% if current %}
             {{final_alias}}.dim_is_current_record = TRUE
