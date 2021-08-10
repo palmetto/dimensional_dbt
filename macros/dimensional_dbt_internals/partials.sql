@@ -15,7 +15,7 @@
         earliest_{{ source }} AS (
             SELECT 
                 {{ unique_key }} AS dimensional_dbt_unique_key
-                , DATE_TRUNC('{{precision}}', MIN(dbt_updated_at))::TIMESTAMPNTZ AS earliest_dbt_updated_at
+                , DATE_TRUNC('{{precision}}', MIN(dbt_updated_at::TIMESTAMPNTZ)) AS earliest_dbt_updated_at
             FROM 
                 {{ source }}
             GROUP BY 1
