@@ -36,7 +36,7 @@
             WHEN DATE_TRUNC('{{precision}}', dbt_valid_from::TIMESTAMPNTZ ) = earliest_dbt_updated_at THEN '0000-01-01'::TIMESTAMPNTZ
             ELSE DATE_TRUNC('{{precision}}', dbt_valid_from::TIMESTAMPNTZ )
         END AS dimensional_dbt_valid_from
-        ,IFNULL(DATE_TRUNC('{{precision}}', dbt_valid_to ), '9999-12-31'::TIMESTAMPNTZ) AS dimensional_dbt_valid_to
+        ,IFNULL(DATE_TRUNC('{{precision}}', dbt_valid_to::TIMESTAMPNTZ ), '9999-12-31'::TIMESTAMPNTZ) AS dimensional_dbt_valid_to
     FROM
         {{ source }} source
     RIGHT JOIN
