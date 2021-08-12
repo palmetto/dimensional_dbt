@@ -1,4 +1,4 @@
-{%- macro column_selection(source_ctes, column_count, partial=False) -%}
+{%- macro column_selection(source_ctes, column_count,  where_clauses=[], partial=False) -%}
     {#/* The dimensional merge entrypoint where final select columns are defined.
         Note: this is intended to be used as a callback for a `call` block with a SELECT partial.
         Args:
@@ -12,7 +12,7 @@
     */#}
     {{ dimensional_dbt.before_select(source_ctes) }}
     {{ caller() }}
-    {{ dimensional_dbt.after_select(source_ctes, column_count, partial) }}
+    {{ dimensional_dbt.after_select(source_ctes, column_count, where_clauses, partial) }}
 {%- endmacro -%}
 
 

@@ -61,7 +61,7 @@
 
 {%- endmacro -%}
 
-{%- macro from_clause(source_ctes, column_count) -%}
+{%- macro from_clause(source_ctes, column_count, where_clauses) -%}
     {#/* generates the final predicate.
         Args:
             source_ctes: the array of ctes to build the clause for.
@@ -77,6 +77,20 @@
         ON dim_valid_window.dimensional_dbt_unique_key = {{source_cte}}_d.dimensional_dbt_unique_key
         AND {{source_cte}}_d.dimensional_dbt_valid_to > dim_valid_window.dim_valid_from
         AND {{source_cte}}_d.dimensional_dbt_valid_from < dim_valid_window.dim_valid_to
+    {% endfor %}
+    {% for where_clause in where_clauses %}
+        {% if where_clauses and loop.first %}
+            WHERE
+        {% endif %}
+
+        {% if where_clause|length %}
+            {{where_clause}}
+        {% endif %}
+
+        {% if not loop.last and where_clauses[loop.index + 1]|length %}
+            AND
+        {% endif %}
+
     {% endfor %}
     GROUP BY {% for _ in range(column_count + 1) %}{{loop.index}}{% if not loop.last %},{% endif %}{% endfor %}
 

@@ -163,3 +163,18 @@ FROM
 - `sequence item <int>: expected str instance, Undefined found`
   This is likely because you haven't actually installed the `dimensional_dbt` package. 
   Try running `dbt clean && dbt deps`.
+
+
+### How to develop in this project
+
+- Ensure that you have an `.env` file that follows the same pattern as `.ci_env`
+
+- Ensure that you've exported your environmental variables or put them in your zsh or bash profile
+
+- make changes to the macros in `dimensional_dbt/macros`
+
+- create a model in `dimensional_dbt/test_dimesional_dbt` that uses the new feature
+
+- create a test in `dimensional_dbt/test_dimesional_dbt` that tests the new feature
+
+- Run `docker compose run dimensional_dbt`
