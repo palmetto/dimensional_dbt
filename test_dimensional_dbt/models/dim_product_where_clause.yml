@@ -1,0 +1,10 @@
+version: 2
+
+models:
+  - name: dim_product_where_clause
+    columns:
+      - name: vendor_id
+        tests:
+        - accepted_values:
+            values: ['chi-500']
+        

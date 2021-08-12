@@ -5,7 +5,7 @@
 
 {%- endmacro -%}
 
-{%- macro after_select(source_ctes, column_count, partial) -%}
+{%- macro after_select(source_ctes, column_count, where_clauses, partial) -%}
     {% if partial %}
         ,{{ dimensional_dbt.coalesce_snapshot_cols(source_ctes, 'valid_from') }}::TIMESTAMPNTZ AS dbt_valid_from
         ,{{ dimensional_dbt.coalesce_snapshot_cols(source_ctes, 'valid_to') }}::TIMESTAMPNTZ AS dbt_valid_to
@@ -17,7 +17,7 @@
     FROM
         {#/* +3 is due to the extra columns above needed for a partial */#}
         {% set final_column_count = (column_count + 3) if partial else column_count %}
-        {{ dimensional_dbt.from_clause(source_ctes, final_column_count) }}
+        {{ dimensional_dbt.from_clause(source_ctes, final_column_count, where_clauses) }}
 )
 SELECT
     dimensional_dbt_column_selection.*
